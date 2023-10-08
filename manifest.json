@@ -1,0 +1,10 @@
+{
+	"id": "better-canvas-embed",
+	"name": "Better Canvas Embed",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Shows the canvas normally when embeded in a note.",
+	"author": "Yannik Höflich",
+	"authorUrl": "https://github.com/yannikHoeflich",
+	"isDesktopOnly": false
+}
