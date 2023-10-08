@@ -56,16 +56,26 @@ export default class MyPlugin extends Plugin {
 				};
 
 				if (node.type == NodeType.Text) {
-					elementInfo
 					elementInfo.cls += " text";
-					elementInfo.text = node.text as string;
 				}
 
-				container.createDiv(elementInfo);
+				let nodeElement = container.createDiv(elementInfo);
+
+				let splittedText = node.text.split("\n");
+
+				if (node.type == NodeType.Text) {
+					 splittedText.forEach((line) => {
+						nodeElement.createSpan({
+							text: line
+						})
+					});
+
+				}
 			});
 
 			let viewBox = `0 0 100 100`;
 			let svg = container.createSvg("svg", {
+				cls: "line-svg",
 				attr: {
 					viewBox: viewBox,
 					preserveAspectRatio: "none"

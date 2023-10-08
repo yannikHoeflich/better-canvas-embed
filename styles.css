@@ -1,42 +1,37 @@
-.better-canvas-embed{
-    position: relative;
-    display: inline-block;
+.better-canvas-embed {
+  position: relative;
+  display: inline-block;
+}
+.better-canvas-embed .node {
+  position: absolute;
+  display: inline-block;
+  z-index: 2;
+  overflow: hidden;
+}
+.better-canvas-embed .node.text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--text-normal);
+  border: var(--border-width) solid var(--color-base-70);
+  border-radius: var(--radius-m);
+  background-color: var(--background-primary-alt);
+  font-size: 80%;
+  flex-direction: column;
+}
+.better-canvas-embed .line-svg {
+  z-index: 1;
+  position: absolute;
+  display: inline-block;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.better-canvas-embed .line-svg path {
+  stroke: var(--color-base-100);
+  stroke-width: 0.5;
+  fill: none;
 }
 
-.better-canvas-embed .node{
-    position: absolute;
-    display: inline-block;
-    z-index: 2;
-}
-
-.better-canvas-embed .node.text{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-    color: var(--text-normal);
-    border: var(--border-width) solid var(--color-base-70);
-    border-radius: var(--radius-m);
-    background-color: var(--background-primary-alt);
-
-    font-size: 80%;
-}
-
-.better-canvas-embed svg{
-    z-index: 1;
-
-    position: absolute;
-    display: inline-block;
-
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 100%;
-}
-
-.better-canvas-embed svg path{
-    stroke: var(--color-base-100);
-    stroke-width: 0.5;
-    fill: none;
-}
+/*# sourceMappingURL=styles.css.map */
