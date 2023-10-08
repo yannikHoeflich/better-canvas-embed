@@ -1,6 +1,4 @@
-import { readFile } from 'fs';
-import { App, Editor, ItemView, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, WorkspaceLeaf, renderResults } from 'obsidian';
-import { pathToFileURL } from 'url';
+import { Notice, Plugin } from 'obsidian';
 
 // Remember to rename these classes and interfaces!
 
