@@ -4,7 +4,7 @@ import { Notice, Plugin, TFile, normalizePath } from 'obsidian';
 
 const CANVAS_PATH_REGEX = new RegExp("(/?[a-zA-Z0-9\\-\\.])+\\.canvas");
 
-export default class MyPlugin extends Plugin {
+export default class BetterCanvasEmbed extends Plugin {
 	private intervals: number[];
 
 	async onload() {
