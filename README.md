@@ -10,13 +10,10 @@ This is a plugin for [Obsidian](https://obsidian.md/). It lets you embed a canva
 ![Alt text](docs/imgs/plugin_example.png)
 
 ## How to use
-To use this plugin you have to change the links to a block from this:
+Normal canvas embeds are also displayed diffrent with this plugin, but currently only in read view. 
 
-```markdown
-![[folder/testCanvas.canvas]]
-```
+If you want to see the canvas all the time you have to do it like this: 
 
-to this:
 ````markdown
 ```canvas
 folder/testCanvas.canvas
@@ -24,7 +21,7 @@ folder/testCanvas.canvas
 ````
 
 ## Install
-
+Copy the files from the latest release to your plugins folder.
 
 ## Features
 - Text nodes
