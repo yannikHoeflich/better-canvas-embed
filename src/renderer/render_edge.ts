@@ -1,8 +1,8 @@
-import { NodeSide } from "./NodeSide";
-import { CanvasEdge } from "./CanvasEdge";
-import { CanvasNode } from "./CanvasNode";
-import { Canvas } from "./Canvas";
-import { CanvasDimensions } from "./CanvasDimensions";
+import { NodeSide } from "../structs/NodeSide";
+import { CanvasEdge } from "../structs/CanvasEdge";
+import { CanvasNode } from "../structs/CanvasNode";
+import { Canvas } from "../structs/Canvas";
+import { CanvasDimensions } from "../structs/CanvasDimensions";
 
 export function renderEdge(edge: CanvasEdge, canvas: Canvas, dimensions: CanvasDimensions, svg: SVGSVGElement) {
     const fromNode = canvas.nodes.filter(x => x.id == edge.fromNode).first();

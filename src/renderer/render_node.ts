@@ -1,6 +1,6 @@
-import { NodeType } from "./NodeType";
-import { CanvasNode } from "./CanvasNode";
-import { CanvasDimensions } from "./CanvasDimensions";
+import { NodeType } from "../structs/NodeType";
+import { CanvasNode } from "../structs/CanvasNode";
+import { CanvasDimensions } from "../structs/CanvasDimensions";
 
 export function renderNode(node: CanvasNode, dimensions: CanvasDimensions, container: any) {
     const elementInfo: DomElementInfo = {

@@ -1,9 +1,9 @@
 import { App, Notice, TFile } from "obsidian";
-import BetterCanvasEmbed from "./main";
+import BetterCanvasEmbed from "../main";
 import { renderNode } from "./render_node";
 import { renderEdge } from "./render_edge";
-import { CanvasDimensions } from "./CanvasDimensions";
-import { Canvas } from "./Canvas";
+import { CanvasDimensions } from "../structs/CanvasDimensions";
+import { Canvas } from "../structs/Canvas";
 
 export async function renderCanvas(plugin: BetterCanvasEmbed, path: String, parentElement: HTMLElement){
     let app = plugin.app;
@@ -21,7 +21,14 @@ export async function renderCanvas(plugin: BetterCanvasEmbed, path: String, pare
     const heightPerWidth = dimensions.height / dimensions.width;
 
     const id = generateId(32);
-    const container = CreateContainer(app, parentElement, id, path);
+    /*parentElement.createEl("img", {
+        attr:{
+            src: "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
+            width: `${heightPerWidth*100}%`
+        }
+    })*/
+
+    const container = CreateContainer(app, parentElement, id, path, heightPerWidth);
 
     canvas.nodes.forEach(node => {
         renderNode(node, dimensions, container);
@@ -32,31 +39,6 @@ export async function renderCanvas(plugin: BetterCanvasEmbed, path: String, pare
     canvas.edges.forEach(edge => {
         renderEdge(edge, canvas, dimensions, svg)
     });
-
-    let lastWidth = 0;
-    const interval = window.setInterval(() => {
-        let container = document.getElementById(id as string);
-        if (container == null) {
-            window.clearInterval(interval);
-            plugin.intervals.remove(interval);
-            return;
-        }
-
-        lastWidth = updateContainerSize(parentElement.clientWidth, lastWidth, container, heightPerWidth)
-    }, 50);
-
-    plugin.intervals.push(interval);
-}
-
-function updateContainerSize(newWidth: number, oldWidth: number, container: HTMLElement, heightPerWidth: number): number{
-    if (newWidth == oldWidth) {
-        return oldWidth;
-    }
-
-    container.style.width = `${newWidth}px`;
-    container.style.height = `${heightPerWidth * newWidth}px`;
-
-    return newWidth;
 }
 
 function createSvg(container: HTMLAnchorElement) {
@@ -73,11 +55,12 @@ function createSvg(container: HTMLAnchorElement) {
 
 
 
-function CreateContainer(app: App, parentElement: HTMLElement, id: String, path: String): HTMLAnchorElement {
+function CreateContainer(app: App, parentElement: HTMLElement, id: String, path: String, heightPerWidth: number): HTMLAnchorElement {
     return parentElement.createEl("a", {
         cls: "better-canvas-embed",
         attr: {
-            id: id as string
+            id: id as string,
+            style: `aspect-ratio: ${1/heightPerWidth}`
         },
         href: `obsidian://open?vault=${encodeURIComponent(app.vault.getName())}&file=${encodeURIComponent(path as string)}`
     });
