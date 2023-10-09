@@ -1,15 +1,15 @@
-import { Notice, Plugin } from 'obsidian';
+import { Notice, Plugin, TFile, normalizePath } from 'obsidian';
 
 
 
 const CANVAS_PATH_REGEX = new RegExp("(/?[a-zA-Z0-9\\-\\.])+\\.canvas");
 
 export default class MyPlugin extends Plugin {
+	private intervals: number[];
 
 	async onload() {
 
 		this.registerMarkdownCodeBlockProcessor("canvas", async (source, el, ctx) => {
-			console.log("---------------------------RELOAD--------------------------");
 			let path = source.split('\n').filter(line => CANVAS_PATH_REGEX.test(line)).first();
 
 			if (path == null) {
@@ -17,24 +17,26 @@ export default class MyPlugin extends Plugin {
 				return;
 			}
 
-			let canvasFile = this.app.vault.getFiles().filter(x => x.path == path).first();
-			if (canvasFile == null) {
+			path = normalizePath(path);
+
+			const canvasFile = this.app.vault.getAbstractFileByPath(path);
+			if (!(canvasFile instanceof TFile)) {
 				new Notice("Coulnd't find canvas file at the given path!");
 				return;
 			}
 
 
-			let canvasFileContent = await this.app.vault.read(canvasFile);
-			let canvas = JSON.parse(canvasFileContent) as Canvas;
+			const canvasFileContent = await this.app.vault.read(canvasFile);
+			const canvas = JSON.parse(canvasFileContent) as Canvas;
 
 			let minX = Math.min(...canvas.nodes.map(node => node.x)) - 50;
-			let minY = Math.min(...canvas.nodes.map(node => node.y)) - 50;
+			const minY = Math.min(...canvas.nodes.map(node => node.y)) - 50;
 
 			let maxX = Math.max(...canvas.nodes.map(node => node.x + node.width)) + 50;
-			let maxY = Math.max(...canvas.nodes.map(node => node.y + node.height)) + 50;
+			const maxY = Math.max(...canvas.nodes.map(node => node.y + node.height)) + 50;
 
 			let width = maxX - minX;
-			let height = maxY - minY;
+			const height = maxY - minY;
 
 			if(width < 500){
 				let widthDiff = 500 - width;
@@ -43,9 +45,9 @@ export default class MyPlugin extends Plugin {
 				width = maxX - minX;
 			}
 
-			let heightPerWidth = height / width;
+			const heightPerWidth = height / width;
 
-			let id = generateId(32);
+			const id = generateId(32);
 			const container = el.createEl("a", {
 				cls: "better-canvas-embed",
 				attr: {
@@ -55,7 +57,7 @@ export default class MyPlugin extends Plugin {
 			});
 
 			canvas.nodes.forEach(node => {
-				let elementInfo: DomElementInfo = {
+				const elementInfo: DomElementInfo = {
 					cls: "node",
 					attr: {
 						"style": generateNodeStyle(node, minX, minY, width, height) as string
@@ -66,9 +68,9 @@ export default class MyPlugin extends Plugin {
 					elementInfo.cls += " text";
 				}
 
-				let nodeElement = container.createDiv(elementInfo);
+				const nodeElement = container.createDiv(elementInfo);
 
-				let splittedText = node.text.split("\n");
+				const splittedText = node.text.split("\n");
 
 				if (node.type == NodeType.Text) {
 					 splittedText.forEach((line) => {
@@ -80,8 +82,8 @@ export default class MyPlugin extends Plugin {
 				}
 			});
 
-			let viewBox = `0 0 100 100`;
-			let svg = container.createSvg("svg", {
+			const viewBox = `0 0 100 100`;
+			const svg = container.createSvg("svg", {
 				cls: "line-svg",
 				attr: {
 					viewBox: viewBox,
@@ -90,18 +92,18 @@ export default class MyPlugin extends Plugin {
 			});
 
 			canvas.edges.forEach(edge => {
-				let fromNode = canvas.nodes.filter(x => x.id == edge.fromNode).first();
-				let toNode = canvas.nodes.filter(x => x.id == edge.toNode).first();
+				const fromNode = canvas.nodes.filter(x => x.id == edge.fromNode).first();
+				const toNode = canvas.nodes.filter(x => x.id == edge.toNode).first();
 				if (fromNode == null || toNode == null) {
 					return;
 				}
 
-				let startPos = getPosition(fromNode, edge.fromSide, minX, minY, width, height);
-				let endPos = getPosition(toNode, edge.toSide, minX, minY, width, height);
+				const startPos = getPosition(fromNode, edge.fromSide, minX, minY, width, height);
+				const endPos = getPosition(toNode, edge.toSide, minX, minY, width, height);
 
-				let dx = Math.abs(startPos.curveX - endPos.curveX);
+				const dx = Math.abs(startPos.curveX - endPos.curveX);
 
-				let dy = Math.abs(startPos.curveY - endPos.curveY);
+				const dy = Math.abs(startPos.curveY - endPos.curveY);
 
 				let diff = 0;
 				if(dx == 0){
@@ -120,8 +122,8 @@ export default class MyPlugin extends Plugin {
 					diff = 200;
 				}
 
-				let cx = diff / height * 100;
-				let cy = diff / width * 100;
+				const cx = diff / height * 100;
+				const cy = diff / width * 100;
 				
 				let path = `M${startPos.x} ${startPos.y} `;
 				path += `L${startPos.curveX} ${startPos.curveY} `;
@@ -147,7 +149,7 @@ export default class MyPlugin extends Plugin {
 
 				path +=  `${endPos.curveX} ${endPos.curveY} `;
 
-				if(isHotizontal(edge.toSide)){
+				if(edge.toSide == NodeSide.Bottom || edge.toSide == NodeSide.Top){
 					path +=  `L${endPos.curveX - 5 / width * 100} ${endPos.curveY} `;
 					path +=  `L${endPos.x} ${endPos.y} `;
 					path +=  `L${endPos.curveX + 5 / width * 100} ${endPos.curveY} `;
@@ -168,10 +170,11 @@ export default class MyPlugin extends Plugin {
 			});
 
 			let lastWidth = 0;
-			let interval = window.setInterval(() => {
+			const interval = window.setInterval(() => {
 				let container = document.getElementById(id as string);
 				if (container == null) {
 					window.clearInterval(interval);
+					this.intervals.remove(interval);
 					return;
 				}
 
@@ -184,11 +187,16 @@ export default class MyPlugin extends Plugin {
 				container.style.width = `${clientWidth}px`;
 				container.style.height = `${heightPerWidth * clientWidth}px`;
 			}, 50);
+			this.intervals.push(interval);
 		});
 	}
 
 	onunload() {
-
+		while(this.intervals.length > 0){
+			const firstInterval = this.intervals[0];
+			window.clearInterval(firstInterval);
+			this.intervals.remove(firstInterval);
+		}
 	}
 }
 
@@ -236,10 +244,9 @@ function generateId(length: number): String {
 	let result = '';
 	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 	const charactersLength = characters.length;
-	let counter = 0;
-	while (counter < length) {
+	
+	for (let i = 0; i < length; i++) {
 		result += characters.charAt(Math.floor(Math.random() * charactersLength));
-		counter += 1;
 	}
 	return result;
 }
@@ -285,8 +292,4 @@ enum NodeSide {
 	Left = "left",
 	Right = "right",
 	Top = "top"
-}
-
-function isHotizontal(side: NodeSide){
-	return side == NodeSide.Bottom || side == NodeSide.Top;
 }
