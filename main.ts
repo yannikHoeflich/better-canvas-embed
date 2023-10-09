@@ -36,6 +36,13 @@ export default class MyPlugin extends Plugin {
 			let width = maxX - minX;
 			let height = maxY - minY;
 
+			if(width < 500){
+				let widthDiff = 500 - width;
+				minX -= widthDiff;
+				maxX += widthDiff;
+				width = maxX - minX;
+			}
+
 			let heightPerWidth = height / width;
 
 			let id = generateId(32);
@@ -93,10 +100,28 @@ export default class MyPlugin extends Plugin {
 				let endPos = getPosition(toNode, edge.toSide, minX, minY, width, height);
 
 				let dx = Math.abs(startPos.curveX - endPos.curveX);
-				let cx = dx * 10 / width * 100;
 
 				let dy = Math.abs(startPos.curveY - endPos.curveY);
-				let cy = dy * 10 / width * 100;
+
+				let diff = 0;
+				if(dx == 0){
+					diff = dy;
+				} else if(dy == 0){
+					diff = dx;
+				} else{
+					diff = dx * dy
+				}
+
+				if(diff < 50){
+					diff = 50;
+				}
+
+				if(diff > 200){
+					diff = 200;
+				}
+
+				let cx = diff / height * 100;
+				let cy = diff / width * 100;
 				
 				let path = `M${startPos.x} ${startPos.y} `;
 				path += `L${startPos.curveX} ${startPos.curveY} `;
