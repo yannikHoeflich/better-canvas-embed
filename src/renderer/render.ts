@@ -4,6 +4,8 @@ import { renderNode } from "./render_node";
 import { renderEdge } from "./render_edge";
 import { CanvasDimensions } from "../structs/CanvasDimensions";
 import { Canvas } from "../structs/Canvas";
+import { CanvasNode } from "src/structs/Nodes/CanvasNode";
+import { ParseJsonToNode } from "../structs/node_utilities";
 
 export async function renderCanvas(plugin: BetterCanvasEmbed, path: String, parentElement: HTMLElement){
     let app = plugin.app;
@@ -14,6 +16,13 @@ export async function renderCanvas(plugin: BetterCanvasEmbed, path: String, pare
         return;
     }
 
+    let activeFile = app.workspace.getActiveFile();
+
+    if(activeFile == canvasFile){
+        new Notice("Please don't embed a canvas in it self!");
+        return;
+    }
+
     const canvas = await getCanvas(app, canvasFile);
 
     var dimensions = getCanvasDimensions(canvas);
@@ -21,17 +30,12 @@ export async function renderCanvas(plugin: BetterCanvasEmbed, path: String, pare
     const heightPerWidth = dimensions.height / dimensions.width;
 
     const id = generateId(32);
-    /*parentElement.createEl("img", {
-        attr:{
-            src: "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
-            width: `${heightPerWidth*100}%`
-        }
-    })*/
 
     const container = CreateContainer(app, parentElement, id, path, heightPerWidth);
 
     canvas.nodes.forEach(node => {
-        renderNode(node, dimensions, container);
+        let parsedNode = ParseJsonToNode(node);
+        renderNode(parsedNode, dimensions, container, plugin);
     });
 
     const svg = createSvg(container);
@@ -103,4 +107,3 @@ function generateId(length: number): String {
 	}
 	return result;
 }
-

@@ -1,8 +1,10 @@
 import { NodeType } from "../structs/NodeType";
-import { CanvasNode } from "../structs/CanvasNode";
+import { CanvasNode } from "../structs/Nodes/CanvasNode";
 import { CanvasDimensions } from "../structs/CanvasDimensions";
+import { App } from "obsidian";
+import BetterCanvasEmbed from "src/main";
 
-export function renderNode(node: CanvasNode, dimensions: CanvasDimensions, container: any) {
+export function renderNode(node: CanvasNode, dimensions: CanvasDimensions, container: HTMLAnchorElement, plugin: BetterCanvasEmbed) {
     const elementInfo: DomElementInfo = {
         cls: "node",
         attr: {
@@ -10,21 +12,11 @@ export function renderNode(node: CanvasNode, dimensions: CanvasDimensions, conta
         }
     };
 
-    if (node.type == NodeType.Text) {
-        elementInfo.cls += " text";
-    }
+    elementInfo.cls += ` ${node.type.toLocaleLowerCase()}`;
 
     const nodeElement = container.createDiv(elementInfo);
 
-    const splittedText = node.text.split("\n");
-
-    if (node.type == NodeType.Text) {
-        splittedText.forEach((line) => {
-            nodeElement.createSpan({
-                text: line
-            });
-        });
-    }
+    node.Render(nodeElement, plugin);
 }
 
 function generateNodeStyle(node: CanvasNode, dimensions: CanvasDimensions): String {

@@ -1,6 +1,6 @@
 import { NodeSide } from "../structs/NodeSide";
 import { CanvasEdge } from "../structs/CanvasEdge";
-import { CanvasNode } from "../structs/CanvasNode";
+import { CanvasNode } from "../structs/Nodes/CanvasNode";
 import { Canvas } from "../structs/Canvas";
 import { CanvasDimensions } from "../structs/CanvasDimensions";
 

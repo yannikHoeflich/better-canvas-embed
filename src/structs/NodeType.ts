@@ -1,4 +1,5 @@
 
 export enum NodeType {
-    Text = "text"
+    Text = "text",
+    File = "file"
 }

@@ -1,5 +1,5 @@
 import { CanvasEdge } from "./CanvasEdge";
-import { CanvasNode } from "./CanvasNode";
+import { CanvasNode } from "./Nodes/CanvasNode";
 
 
 export class Canvas {

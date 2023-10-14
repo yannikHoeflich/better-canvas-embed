@@ -7,20 +7,28 @@
         display: inline-block;
         z-index: 2;
         overflow: hidden;
+        color: var(--text-normal);
+        border: var(--border-width) solid var(--color-base-70);
+        border-radius: var(--radius-m);
+        background-color: var(--background-primary-alt);
 
         &.text {
             display: flex;
             justify-content: center;
             align-items: center;
 
-            color: var(--text-normal);
-            border: var(--border-width) solid var(--color-base-70);
-            border-radius: var(--radius-m);
-            background-color: var(--background-primary-alt);
-
             font-size: 80%;
 
             flex-direction: column;
+        }
+
+        &.file{
+            p{
+                margin: 0;
+                img{
+                    width: 100%;
+                }
+            }
         }
     }
 

@@ -1,6 +1,7 @@
-import { App, Editor, EditorChange, Notice, Plugin, normalizePath } from 'obsidian';
+import { App, Editor, EditorChange, MarkdownView, Notice, Plugin, normalizePath } from 'obsidian';
 import { renderCanvas } from './renderer/render';
 import { write } from 'fs';
+import { parsePath } from './path_utilities';
 
 const CANVAS_PATH_REGEX = new RegExp("(/?[a-zA-Z0-9\\-\\.])+\\.canvas");
 
@@ -23,7 +24,7 @@ export default class BetterCanvasEmbed extends Plugin {
 						return;
 					}
 
-					let path = parsePath(source);
+					let path = parsePath(source, this.app);
 					embed.remove();
 					let el = parent.createDiv({
 						cls: "canvas-embed"
@@ -43,7 +44,7 @@ export default class BetterCanvasEmbed extends Plugin {
 			}
 
 			paths.forEach(path => {
-				path = parsePath(path) as string;
+				path = parsePath(path, this.app) as string;
 				renderCanvas(this, path, el);
 			});
 		});
@@ -51,18 +52,4 @@ export default class BetterCanvasEmbed extends Plugin {
 
 	onunload() {
 	}
-}
-
-function parsePath(path: String): String{
-	path = getAbsolutePath(this.app, path);
-	path = normalizePath(path as string);
-	return path;
-}
-
-function getAbsolutePath(app: App, path: String){
-	if(path.contains("/")){
-		return path;
-	}
-
-	return app.vault.getFiles().filter(x => x.name == path).first()?.path ?? path;
 }
