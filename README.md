@@ -25,4 +25,5 @@ Copy the files from the latest release to your plugins folder.
 
 ## Features
 - Text nodes
+- Image nodes
 - Edges (Arrows) between two noded
